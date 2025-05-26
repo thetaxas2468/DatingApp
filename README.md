@@ -33,9 +33,11 @@ Start the development server:
 
 ng serve
 App will be available at: http://localhost:4200
+```
 
 
-⚙️ Backend (ASP.NET Core)
+### ⚙️ Backend (ASP.NET Core)
+```
 Navigate to the backend folder:
 
 cd DatingAppBackend
@@ -47,7 +49,10 @@ API will be available at: http://localhost:5000 (or as configured in launchSetti
 EF Core Migrations:
 dotnet ef migrations add InitialCreate -o Data/Migrations
 dotnet ef database update
-🔧 Configuration
+```
+
+### 🔧 Configuration
+```
 Database: datingapp.db (SQLite file)
 
 Backend Port: Configured in Properties/launchSettings.json
@@ -55,8 +60,10 @@ Backend Port: Configured in Properties/launchSettings.json
 Frontend Port: Configured in angular.json
 
 Logging: Serilog configuration in Program.cs
+```
 
-🛠 Tech Stack
+### 🛠 Tech Stack
+```
 Layer	Tech
 Frontend	Angular 19, TypeScript, RxJS
 Backend	ASP.NET Core Web API, C#
@@ -65,7 +72,10 @@ Auth	JWT (optional, for future)
 Logging	Serilog
 Dev Tools	Visual Studio Code, Visual Studio 2022, Git, GitHub
 
-🧪 Features (Current & Planned)
+```
+
+### 🧪 Features (Current & Planned)
+```
  User registration & login (in progress)
 
  Responsive Angular UI
@@ -79,15 +89,16 @@ Dev Tools	Visual Studio Code, Visual Studio 2022, Git, GitHub
  Matching logic
 
  Real-time chat (SignalR)
-
-💡 Development Tips
+```
+### 💡 Development Tips
+```
 Use ng generate component --standalone for Angular 19 components.
 
 Use dotnet watch run for auto-reloading the backend.
 
 Keep .gitignore updated for both frontend and backend.
-
-📄 License
+```
+### 📄 License
 MIT License
 
 
