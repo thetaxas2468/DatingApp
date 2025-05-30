@@ -16,6 +16,14 @@ var AnimationMetadataType;
   AnimationMetadataType2[AnimationMetadataType2["Stagger"] = 12] = "Stagger";
 })(AnimationMetadataType || (AnimationMetadataType = {}));
 var AUTO_STYLE = "*";
+function trigger(name, definitions) {
+  return {
+    type: AnimationMetadataType.Trigger,
+    name,
+    definitions,
+    options: {}
+  };
+}
 function animate(timings, styles = null) {
   return {
     type: AnimationMetadataType.Animate,
@@ -35,6 +43,22 @@ function style(tokens) {
     type: AnimationMetadataType.Style,
     styles: tokens,
     offset: null
+  };
+}
+function state(name, styles, options) {
+  return {
+    type: AnimationMetadataType.State,
+    name,
+    styles,
+    options
+  };
+}
+function transition(stateChangeExpr, steps, options = null) {
+  return {
+    type: AnimationMetadataType.Transition,
+    expr: stateChangeExpr,
+    animation: steps,
+    options
   };
 }
 var NoopAnimationPlayer = class {
@@ -263,9 +287,12 @@ var ɵPRE_STYLE = "!";
 export {
   AnimationMetadataType,
   AUTO_STYLE,
+  trigger,
   animate,
   sequence,
   style,
+  state,
+  transition,
   NoopAnimationPlayer,
   AnimationGroupPlayer,
   ɵPRE_STYLE
@@ -279,4 +306,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-JX67PGFT.js.map
+//# sourceMappingURL=chunk-KGUSKD2Z.js.map

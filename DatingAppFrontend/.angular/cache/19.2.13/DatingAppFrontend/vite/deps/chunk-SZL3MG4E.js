@@ -1,7 +1,7 @@
 import {
   DOCUMENT,
   isPlatformBrowser
-} from "./chunk-Z76YFJ7Z.js";
+} from "./chunk-MT6MSA5T.js";
 import {
   ApplicationRef,
   Attribute,
@@ -4929,6 +4929,7 @@ export {
   Location,
   HashLocationStrategy,
   NgClass,
+  NgIf,
   CommonModule,
   ViewportScroller
 };
@@ -4944,4 +4945,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-EYUZAET7.js.map
+//# sourceMappingURL=chunk-SZL3MG4E.js.map
