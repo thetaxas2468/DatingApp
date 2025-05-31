@@ -1,6 +1,6 @@
 using DatingAppBackend.Models;
 
-namespace DatingAppBackend.Interfaces
+namespace DatingAppBackend
 {
   public interface ITokenService
   {

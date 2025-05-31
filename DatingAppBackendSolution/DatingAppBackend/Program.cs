@@ -1,3 +1,4 @@
+using DatingAppBackend;
 using DatingAppBackend.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -17,7 +18,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors();
 // Register the token service
-builder.Services.AddScoped<DatingAppBackend.Interfaces.ITokenService, DatingAppBackend.Services.TokenService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -39,7 +40,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionMiddleware>();
 app.UseCors(policy =>
 {
     policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200", "http://localhost:4200");

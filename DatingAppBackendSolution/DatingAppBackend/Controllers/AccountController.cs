@@ -1,63 +1,107 @@
 using DatingAppBackend.Data;
 using DatingAppBackend.DTOs;
-using DatingAppBackend.Interfaces;
 using DatingAppBackend.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace DatingAppBackend.Controllers
+namespace DatingAppBackend.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class AccountController(DataContext context, ITokenService tokenService) : ControllerBase
 {
-  public class AccountController(DataContext context, ITokenService tokenService) : BaseApiController
+  [HttpPost("register")]
+  public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
   {
-
-
-    [HttpPost("register")]
-    public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
+    if (string.IsNullOrWhiteSpace(registerDto.Username) || string.IsNullOrWhiteSpace(registerDto.Password))
     {
-      if (await this.UserExists(registerDto.Username))
-      {
-        return BadRequest("Username is taken");
-      }
+      return BadRequest("Username and password must not be empty.");
+    }
+
+    var username = registerDto.Username.Trim().ToLower();
+
+    if (await UserExists(username))
+    {
+      return BadRequest("Username is already taken.");
+    }
+
+    try
+    {
       using var hmac = new HMACSHA512();
       var user = new AppUser
       {
-        UserName = registerDto.Username.ToLower(),
-        PasswordHash = hmac.ComputeHash(System.Text.Encoding.UTF8.GetBytes(registerDto.Password)),
+        UserName = username,
+        PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
         PasswordSalt = hmac.Key
       };
 
       context.Users.Add(user);
       await context.SaveChangesAsync();
-      return new UserDto
+
+      return Ok(new UserDto
       {
         UserName = user.UserName,
         Token = tokenService.CreateToken(user)
-      };
+      });
+    }
+    catch (Exception ex)
+    {
+      return StatusCode(500, $"Internal server error: {ex.Message}");
+    }
+  }
+
+  [HttpPost("login")]
+  public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+  {
+    if (string.IsNullOrWhiteSpace(loginDto.Username) || string.IsNullOrWhiteSpace(loginDto.Password))
+    {
+      return BadRequest("Username and password must not be empty.");
     }
 
-    [HttpPost("login")]
-    public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+    var username = loginDto.Username.Trim().ToLower();
+
+    try
     {
       var user = await context.Users
-        .FirstOrDefaultAsync(x => x.UserName.ToLower() == loginDto.Username.ToLower());
-      if (user == null) return Unauthorized("Invalid username");
+          .FirstOrDefaultAsync(x => x.UserName == username);
+
+      if (user == null)
+      {
+        return Unauthorized("Invalid username or password.");
+      }
+
       using var hmac = new HMACSHA512(user.PasswordSalt);
       var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
-      for (int i = 0; i < computedHash.Length; i++)
+
+      if (!computedHash.SequenceEqual(user.PasswordHash))
       {
-        if (computedHash[i] != user.PasswordHash[i]) return Unauthorized("Invalid password");
+        return Unauthorized("Invalid username or password.");
       }
-      return new UserDto
+
+      return Ok(new UserDto
       {
         UserName = user.UserName,
         Token = tokenService.CreateToken(user)
-      };
+      });
     }
-    private async Task<bool> UserExists(string username)
+    catch (Exception ex)
     {
-      return await context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
+      return StatusCode(500, $"Internal server error: {ex.Message}");
     }
+  }
+
+  [AllowAnonymous]
+  [HttpGet("Internalerror")]
+  public ActionResult<string> InternalError()
+  {
+    return StatusCode(500, $"Internal server error");
+  }
+
+  private async Task<bool> UserExists(string username)
+  {
+    return await context.Users.AnyAsync(x => x.UserName == username);
   }
 }

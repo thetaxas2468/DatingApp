@@ -4,7 +4,6 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AccountService } from '../../services/account.service';
 import { ToastrService } from 'ngx-toastr';
-// import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
