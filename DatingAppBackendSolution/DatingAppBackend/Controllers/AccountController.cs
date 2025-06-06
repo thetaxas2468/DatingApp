@@ -27,30 +27,31 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     {
       return BadRequest("Username is already taken.");
     }
+    return Ok();
 
-    try
-    {
-      using var hmac = new HMACSHA512();
-      var user = new AppUser
-      {
-        UserName = username,
-        PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-        PasswordSalt = hmac.Key
-      };
+    //try
+    //{
+    //  using var hmac = new HMACSHA512();
+    //  var user = new AppUser
+    //  {
+    //    UserName = username,
+    //    PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+    //    PasswordSalt = hmac.Key
+    //  };
 
-      context.Users.Add(user);
-      await context.SaveChangesAsync();
+    //  context.Users.Add(user);
+    //  await context.SaveChangesAsync();
 
-      return Ok(new UserDto
-      {
-        UserName = user.UserName,
-        Token = tokenService.CreateToken(user)
-      });
-    }
-    catch (Exception ex)
-    {
-      return StatusCode(500, $"Internal server error: {ex.Message}");
-    }
+    //  return Ok(new UserDto
+    //  {
+    //    UserName = user.UserName,
+    //    Token = tokenService.CreateToken(user)
+    //  });
+    //}
+    //catch (Exception ex)
+    //{
+    //  return StatusCode(500, $"Internal server error: {ex.Message}");
+    //}
   }
 
   [HttpPost("login")]
