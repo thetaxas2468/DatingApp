@@ -1,4 +1,7 @@
+using AutoMapper;
 using DatingAppBackend.Data;
+using DatingAppBackend.DTOs;
+using DatingAppBackend.Interfaces;
 using DatingAppBackend.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +12,10 @@ namespace DatingAppBackend.Controllers
   [Authorize]
   public class UsersController : BaseApiController
   {
-    private readonly DataContext _context;
-    public UsersController(DataContext context)
+    private readonly IUserRepository _userRepository;
+    public UsersController(IUserRepository userRepository)
     {
-      _context = context;
+      _userRepository = userRepository;
     }
 
     [AllowAnonymous]
@@ -21,11 +24,12 @@ namespace DatingAppBackend.Controllers
     {
       try
       {
-        var users = await _context.Users.ToListAsync();
-        if (users == null || users.Count == 0)
+        var users = await _userRepository.GetMembersAsync();
+        if (users == null || users.Count() == 0)
         {
           return NotFound("No users found.");
         }
+        // Optionally map to a DTO if needed
 
         return Ok(users);
       }
@@ -35,7 +39,7 @@ namespace DatingAppBackend.Controllers
       }
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("id/{id}")]
     public async Task<ActionResult<AppUser>> GetUser(int id)
     {
       if (id <= 0)
@@ -45,12 +49,33 @@ namespace DatingAppBackend.Controllers
 
       try
       {
-        var user = await _context.Users.FindAsync(id);
+        var user = await _userRepository.GetMemberByIdAsync(id);
         if (user == null)
         {
           return NotFound($"User with ID {id} not found.");
         }
 
+        return Ok(user);
+      }
+      catch (Exception ex)
+      {
+        return StatusCode(500, "An error occurred while retrieving the user." + ex.Message);
+      }
+    }
+    [HttpGet("{username}")]
+    public async Task<ActionResult<AppUser>> GetUserByUsername(string username)
+    {
+      if (string.IsNullOrWhiteSpace(username))
+      {
+        return BadRequest("Username must not be empty.");
+      }
+      try
+      {
+        var user = await _userRepository.GetMemberByUsernameAsync(username);
+        if (user == null)
+        {
+          return NotFound($"User with username {username} not found.");
+        }
         return Ok(user);
       }
       catch (Exception ex)

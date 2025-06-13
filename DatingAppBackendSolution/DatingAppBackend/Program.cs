@@ -1,5 +1,7 @@
 using DatingAppBackend;
 using DatingAppBackend.Data;
+using DatingAppBackend.Interfaces;
+using DatingAppBackend.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,6 +21,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 // Register the token service
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {

@@ -21,6 +21,6 @@ namespace DatingAppBackend.Models
 
         public List<Photo> Photos { get; set; } = new List<Photo>();
 
-        public int GetAge() => DateOfBirth.CalculateAge(); // Using the extension method to calculate age
+        //public int GetAge() => DateOfBirth.CalculateAge(); // Using the extension method to calculate age
   }
 }
